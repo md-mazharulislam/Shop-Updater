@@ -18,6 +18,17 @@ async def fixed_json_data() -> dict:
             return json.loads(data)
 
 
+async def csv_file_format() -> None:
+    async with aiofiles.open("data.csv", "r") as wrong_format_csv_file:
+        file_data = await wrong_format_csv_file.read()
+        file_data = file_data.replace("|", ",")
+        file_data = file_data.replace('XTSOL,', "")
+        async with aiofiles.open("data.csv", "w") as write_correct_csv_file:
+            correct_data = await write_correct_csv_file.write(file_data)
+            print(correct_data)
+            print("data.csv file formate.")
+
+
 def create_schema(
         p_id: int,
         product_img_height: str,
@@ -147,6 +158,7 @@ def create_schema(
 
 async def create_all_schema() -> None:
     global all_schemas
+    await csv_file_format()
     fixed_json_data_list = await fixed_json_data()
     update_data_set = numpy.array(list(csv.reader(open("./data.csv", "r"), delimiter=","))).astype("str")
     for csv_data in update_data_set[1:]:
