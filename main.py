@@ -145,9 +145,6 @@ def create_schema(
     return schema
 
 
-all_schemas = numpy.array([])
-
-
 async def create_all_schema() -> None:
     global all_schemas
     fixed_json_data_list = await fixed_json_data()
@@ -245,37 +242,38 @@ async def create_all_schema() -> None:
         print(write_file)
         print("update_data.json file written.")
 
-asyncio.run(create_all_schema())
+if __name__ == "__main__":
+    all_schemas = numpy.array([])
+    asyncio.run(create_all_schema())
+    index_number = numpy.array([], dtype="i8")
+    for number in range(1, len(all_schemas)):
+        if number % 500 == 0:
+            index_number = numpy.append(index_number, number + 1)
+        elif number % 500 != 0 and number == len(all_schemas) - 1:
+            index_number = numpy.append(index_number, number)
+        else:
+            continue
 
-index_number = numpy.array([], dtype="i8")
-for number in range(1, len(all_schemas)):
-    if number % 500 == 0:
-        index_number = numpy.append(index_number, number + 1)
-    elif number % 500 != 0 and number == len(all_schemas) - 1:
-        index_number = numpy.append(index_number, number)
-    else:
-        continue
+    first_index = 0
+    last_index = 0
+    username = "Wimmer-Construction@web.de"
+    pas_wod = "zQ3c%5YN8azi"
+    url = "https://www.wimmer-construction.de/api.php/v2/products"
+    headers = {'content-type': 'application/json'}
 
-first_index = 0
-last_index = 0
-username = "Wimmer-Construction@web.de"
-pas_wod = "zQ3c%5YN8azi"
-url = "https://www.wimmer-construction.de/api.php/v2/products"
-headers = {'content-type': 'application/json'}
-
-for number in index_number:
-    last_index = number
-    print({'first': first_index, 'last': last_index})
-    request_data = json.dumps(all_schemas[first_index:last_index].tolist())
-    response = requests.request(
-        method="PUT",
-        url=url,
-        headers=headers,
-        auth=HTTPBasicAuth(
-            username=username,
-            password=pas_wod
-        ),
-        data=request_data
-    )
-    print(response)
-    first_index = last_index
+    for number in index_number:
+        last_index = number
+        print({'first': first_index, 'last': last_index})
+        request_data = json.dumps(all_schemas[first_index:last_index].tolist())
+        response = requests.request(
+            method="PUT",
+            url=url,
+            headers=headers,
+            auth=HTTPBasicAuth(
+                username=username,
+                password=pas_wod
+            ),
+            data=request_data
+        )
+        print(response)
+        first_index = last_index
