@@ -1,3 +1,6 @@
 .idea/
 venv/
 Shop-Updater.iml
+build/
+main.spec
+__pycache__/
